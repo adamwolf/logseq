@@ -25,6 +25,7 @@
             [frontend.db :as db]
             [frontend.db.model :as model]
             [frontend.db-mixins :as db-mixins]
+            [frontend.db.utils :as db-utils]
             [frontend.extensions.highlight :as highlight]
             [frontend.extensions.latex :as latex]
             [frontend.extensions.lightbox :as lightbox]
@@ -1972,6 +1973,22 @@
                                  (util/stop e)))
 
                              :dune)))}
+
+                      ;; Get the ID of the page referred to by t's :block/page.
+                      ;; Use that ID to pull the page from the database, and only take the :block/properties map.
+                      ;; Then, look up the :hl-handle in the :block/properties, and bind it to awolf-hl-handle..
+                      ;; If any of those things are nil or don't exist, awolf-hl-handle is nil.
+
+                      ;; Then, if awolf-hl-handle is not nil, render a span.hl-handle with the handle and a space in it.
+                      (let [awolf-hl-handle (:hl-handle
+                                              (:block/properties
+                                                (db-utils/pull [:block/properties]
+                                                               (:db/id (:block/page t)))))]
+                        (when awolf-hl-handle
+                          [:span.hl-handle
+                            [:strong.forbid-edit (str awolf-hl-handle " ")]]
+                          )
+                        )
 
                       [:span.hl-page
                        [:strong.forbid-edit (str "P" (or (:hl-page properties) "?"))]
