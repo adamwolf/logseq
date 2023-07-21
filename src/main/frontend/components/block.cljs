@@ -905,7 +905,8 @@
                     :else
                     (match [block-type (util/electron?)]
                       ;; pdf annotation
-                      [:annotation true] (pdf-assets/open-block-ref! block)
+                      ;; actually, don't hijack the whole block to open the PDF
+                      ;; [:annotation true] (pdf-assets/open-block-ref! block)
 
                       [:whiteboard-shape true] (route-handler/redirect-to-whiteboard!
                                                 (get-in block [:block/page :block/name]) {:block-id block-id})
